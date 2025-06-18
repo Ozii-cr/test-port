@@ -1,0 +1,73 @@
+{
+  "identifier": "PRHealth",
+  "title": "Pull Request Health",
+  "levels": [
+    {
+      "color": "red",
+      "title": "Needs Attention",
+      "isBaseLevel": true
+    },
+    {
+      "color": "bronze",
+      "title": "Bronze"
+    },
+    {
+      "color": "silver",
+      "title": "Silver"
+    },
+    {
+      "color": "gold",
+      "title": "Gold"
+    }
+  ],
+  "rules": [
+    {
+      "identifier": "bronze_prs",
+      "description": "Repository has fewer than 15 open PRs",
+      "title": "PRs < 15",
+      "level": "Bronze",
+      "query": {
+        "combinator": "and",
+        "conditions": [
+          {
+            "operator": "<",
+            "property": "open_prs_count",
+            "value": 15
+          }
+        ]
+      }
+    },
+    {
+      "identifier": "silver_prs",
+      "description": "Repository has fewer than 10 open PRs",
+      "title": "PRs < 10",
+      "level": "Silver",
+      "query": {
+        "combinator": "and",
+        "conditions": [
+          {
+            "operator": "<",
+            "property": "open_prs_count",
+            "value": 10
+          }
+        ]
+      }
+    },
+    {
+      "identifier": "gold_prs",
+      "description": "Repository has fewer than 5 open PRs",
+      "title": "PRs < 5",
+      "level": "Gold",
+      "query": {
+        "combinator": "and",
+        "conditions": [
+          {
+            "operator": "<",
+            "property": "open_prs_count",
+            "value": 5
+          }
+        ]
+      }
+    }
+  ]
+}
