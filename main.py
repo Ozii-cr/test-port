@@ -39,10 +39,13 @@ def update_eol_counts():
         relations = svc.get("relations", {})
         related_framework_ids = relations.get("used_frameworks", []) 
 
-        eol_count = sum(
-            1 for fw_id in related_framework_ids
-            if frameworks.get(fw_id, {}).get("properties", {}).get("state") == EOL_STATE
-        )
+        eol_count = 0
+        for fw_id in related_framework_ids:
+            framework = frameworks.get(fw_id, {})
+            properties = framework.get("properties", {})
+            state = properties.get("state")
+            if state == "EOL":
+                eol_count += 1
 
         #  entity update 
         update_url = f"{PORT_API_BASE_URL}/blueprints/{SERVICE_BLUEPRINT}/entities/{svc_id}"
