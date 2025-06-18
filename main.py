@@ -2,6 +2,7 @@ import requests
 import os
 
 # === CONFIGURATION ===
+# Configure API token and headers
 PORT_API_BASE_URL = "https://api.port.io/v1"
 PORT_CLIENT_TOKEN = os.getenv("PORT_CLIENT_TOKEN")
 HEADERS = {
@@ -9,12 +10,13 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
+# Values as named in my services and framework
 SERVICE_BLUEPRINT = "service"
 FRAMEWORK_BLUEPRINT = "framework"
 EOL_STATE = "EOL"
 EOL_PROP_KEY = "number_of_eol_packages"  
 
-
+#get requests for all frameworks
 def get_all_frameworks():
     url = f"{PORT_API_BASE_URL}/blueprints/{FRAMEWORK_BLUEPRINT}/entities"
     resp = requests.get(url, headers=HEADERS)
@@ -22,7 +24,7 @@ def get_all_frameworks():
     frameworks = resp.json().get("entities", [])
     return {fw["identifier"]: fw for fw in frameworks}
 
-
+#get requests for all services
 def get_all_services():
     url = f"{PORT_API_BASE_URL}/blueprints/{SERVICE_BLUEPRINT}/entities"
     resp = requests.get(url, headers=HEADERS)
@@ -39,12 +41,16 @@ def update_eol_counts():
         relations = svc.get("relations", {})
         related_framework_ids = relations.get("used_frameworks", []) 
 
-        eol_count = sum(
-            1 for fw_id in related_framework_ids
-            if frameworks.get(fw_id, {}).get("properties", {}).get("state") == EOL_STATE
-        )
+        #count how many values in the state properties have EOL
+        eol_count = 0
+        for fw_id in related_framework_ids:
+            framework = frameworks.get(fw_id, {})
+            properties = framework.get("properties", {})
+            state = properties.get("state")
+            if state == "EOL":
+                eol_count += 1
 
-        #  entity update 
+        #  update the service  
         update_url = f"{PORT_API_BASE_URL}/blueprints/{SERVICE_BLUEPRINT}/entities/{svc_id}"
         payload = {
             "identifier": svc_id,
